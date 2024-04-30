@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+# Files
+CMakeCache.txt
+Makefile
+SinMQTTTest
+cmake_install.cmake
+mySQLTest
+randomTest
+
+#directories
+CMakeFiles/
+
