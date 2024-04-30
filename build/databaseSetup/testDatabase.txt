@@ -1,0 +1,6 @@
+CREATE TABLE `sin_test` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sin_value` double DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
