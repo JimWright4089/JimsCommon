@@ -40,7 +40,7 @@ class Connection
     virtual ~Connection() {}
     void print(void);
     std::string getJson();
-    void loadFromFile(std::string fileName);
+    bool loadFromFile(std::string fileName);
 
     std::string getHost();
     std::string getUser();

@@ -62,7 +62,10 @@ MySQLDatabase::MySQLDatabase() :
 void MySQLDatabase::loadConfiguration(std::string fileName)
 {
   std::string sqlFilename(fileName);
-  mConnection.loadFromFile(sqlFilename);
+  if(false == mConnection.loadFromFile(sqlFilename))
+  {
+    std::cout << "The connection is blank\n";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -79,14 +82,21 @@ void MySQLDatabase::openDatabase()
     mDriver = sql::mysql::get_driver_instance();
   }
 
-  if(nullptr == mConnect)
+  if((""==mConnection.getHost())&&(""==mConnection.getUser()))
   {
-    mConnect = mDriver->connect(
-          mConnection.getHost().c_str(),
-          mConnection.getUser().c_str(),
-          mConnection.getPassword().c_str());
+    std::cout << "The connection is blank not connecting to database\n";
+  }
+  else
+  {
+    if(nullptr == mConnect)
+    {
+      mConnect = mDriver->connect(
+            mConnection.getHost().c_str(),
+            mConnection.getUser().c_str(),
+            mConnection.getPassword().c_str());
 
-    mConnect->setSchema(mConnection.getDatabase().c_str());
+      mConnect->setSchema(mConnection.getDatabase().c_str());
+    }
   }
 
 }
@@ -116,6 +126,11 @@ MySQLDatabase::~MySQLDatabase()
 void MySQLDatabase::executeStatement(std::string sqlCommand, int &returnValue)
 {
   returnValue = EXIT_FAILURE;
+
+  if(NULL == mConnect)
+  {
+    return;
+  }
 
   if(true == gVerboseDB)
   {
@@ -150,6 +165,11 @@ void MySQLDatabase::executeStatement(std::string sqlCommand, int &returnValue)
 std::shared_ptr<sql::ResultSet> MySQLDatabase::executeStatementWithResult(std::string sqlCommand, int &returnValue)
 {
   returnValue = EXIT_FAILURE;
+
+  if(NULL == mConnect)
+  {
+    return nullptr;
+  }
 
   if(true == gVerboseDB)
   {
