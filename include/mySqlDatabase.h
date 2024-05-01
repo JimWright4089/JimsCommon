@@ -1,15 +1,11 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: mySQLDatabae.h$
+//  Workfile: mySQLDatabae.h
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
-//     This is the my sql database handler
+//     This is the mySQL database handler
 //
 //----------------------------------------------------------------------------
 #ifndef MY_SQL_DATABASE_H
@@ -18,16 +14,12 @@
 //----------------------------------------------------------------------------
 //  Includes
 //----------------------------------------------------------------------------
-#include <stdint.h>
 #include <string>
 #include "connection.h"
-//#include "mysql_connection.h"
 #include "mysql_driver.h"
-
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
-#include <cppconn/statement.h>
 
 //----------------------------------------------------------------------------
 //  Class Declarations
@@ -46,7 +38,7 @@ class MySQLDatabase
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    static MySQLDatabase &GetInstance();
+    static MySQLDatabase &getInstance();
     void loadConfiguration(std::string fileName);
     void openDatabase();
     std::shared_ptr<sql::ResultSet> executeStatementWithResult(std::string sqlCommand, int &returnValue);

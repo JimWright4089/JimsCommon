@@ -1,12 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: connection.cpp$
+//  Workfile: connection.cpp
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is the code for coneecting to things with a userid and password
@@ -16,9 +12,6 @@
 //----------------------------------------------------------------------------
 //  Includes
 //----------------------------------------------------------------------------
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <iostream>
 #include <fstream>
 #include "connection.h"

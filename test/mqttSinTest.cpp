@@ -1,14 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: mySqlTest.cpp$
+//  Workfile: mySqlTest.cpp
 //
-//  $Revision: X$
-//
-//  $Copyright: Jim Wright 2024
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is the test of the mySql Class
@@ -54,7 +48,7 @@ void send(char* topic, double value)
 {
   char valueString[31];
   snprintf(valueString,30,"%f",value);
-  MQTT::GetInstance().send(topic,valueString,strlen(valueString));
+  MQTT::getInstance().send(topic,valueString,strlen(valueString));
 }
 
 //----------------------------------------------------------------------------
@@ -78,7 +72,7 @@ int main(int argc, char* argv[])
   mqttConnection.loadFromFile(mqttFilename);
   mqttConnection.print();
 
-  MQTT::GetInstance().connect(mqttConnection);
+  MQTT::getInstance().connect(mqttConnection);
 
   int count = 0;
   double count1Hz = 0;

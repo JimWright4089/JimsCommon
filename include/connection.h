@@ -1,12 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: connection.h$
+//  Workfile: connection.h
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is the code for coneecting to things with a userid and password
@@ -18,7 +14,6 @@
 //----------------------------------------------------------------------------
 //  Includes
 //----------------------------------------------------------------------------
-#include <stdint.h>
 #include <string>
 #include <jsoncpp/json/json.h>
 
@@ -29,7 +24,7 @@
 // Class Name: Connection
 // 
 // Purpose:
-//      The storage location for the SQL Connection
+//      The storage location for the SQL/MQTT Connection
 //
 //----------------------------------------------------------------------------
 class Connection

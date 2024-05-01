@@ -1,14 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: mySqlTest.cpp$
+//  Workfile: mySqlTest.cpp
 //
-//  $Revision: X$
-//
-//  $Copyright: Jim Wright 2024
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is the test of the mySql Class
@@ -27,8 +21,8 @@
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
-MySQLDatabase &gDatabase = MySQLDatabase::GetInstance();
-bool gVerboseDB;
+MySQLDatabase &gDatabase = MySQLDatabase::getInstance();
+bool gVerboseDB = true;
 
 //----------------------------------------------------------------------------
 //  Purpose:
