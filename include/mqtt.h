@@ -1,15 +1,11 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: randomSingleton.h$
+//  Workfile: mqtt.h$
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
-//     This is a singleton for dealing with a random number that is predictable
+//     This is a singleton publishing and subscribing to mqtt topics
 //
 //----------------------------------------------------------------------------
 #ifndef MQTT_H
@@ -18,9 +14,6 @@
 //----------------------------------------------------------------------------
 //  Includes
 //----------------------------------------------------------------------------
-#include <cstdlib> 
-#include <ctime> 
-#include <iostream>
 #include "MQTTAsync.h"
 #include "connection.h"
 
@@ -31,10 +24,10 @@ const int TIMEOUT = 10000L;
 //  Class Declarations
 //----------------------------------------------------------------------------
 //
-// Class Name: RandomSingleton
+// Class Name: MQTT
 // 
 // Purpose:
-//      The RandomSingleton
+//      
 //
 //----------------------------------------------------------------------------
 class MQTT
@@ -43,8 +36,7 @@ class MQTT
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    static MQTT &GetInstance();
-    ~MQTT();
+    static MQTT &getInstance();
     void connect(Connection connect);
     void send(char* topic, char* payload, int payloadLength);
     static void onConnect(void* context, MQTTAsync_successData* response);
@@ -52,7 +44,8 @@ class MQTT
     static void onSend(void* context, MQTTAsync_successData* response);
     static void onDisconnect(void* context, MQTTAsync_successData* response);
     static void connlost(void *context, char *cause);
-
+    ~MQTT();
+    
   private:
     //----------------------------------------------------------------------------
     //  Class Atributes
@@ -60,7 +53,6 @@ class MQTT
     static std::shared_ptr<MQTT> sInstance;
     MQTTAsync mClient;
     volatile MQTTAsync_token mDeliveredtoken;
-//    static int mFinished;
 
     //----------------------------------------------------------------------------
     //  Class Methods

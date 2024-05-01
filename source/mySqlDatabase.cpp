@@ -1,15 +1,10 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: sqlConnection.cpp$
+//  $Workfile: mySqlDatabase.cpp$
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
-//     This is the code for the Battery object
 //
 //----------------------------------------------------------------------------
 
@@ -18,6 +13,7 @@
 //----------------------------------------------------------------------------
 #include <iostream>
 #include <fstream>
+#include <cppconn/statement.h>
 #include "mySqlDatabase.h"
 
 //----------------------------------------------------------------------------
@@ -33,7 +29,7 @@ std::shared_ptr<MySQLDatabase> MySQLDatabase::sInstance = nullptr;
 //  Notes:
 //
 //----------------------------------------------------------------------------
-MySQLDatabase &MySQLDatabase::GetInstance()
+MySQLDatabase &MySQLDatabase::getInstance()
 {
     if (sInstance == nullptr) 
     {

@@ -1,12 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: randomSingleton.cpp$
+//  Workfile: randomSingleton.cpp
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is the code for returning random numbers
@@ -46,7 +42,7 @@ RandomSingleton::RandomSingleton()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-RandomSingleton &RandomSingleton::GetInstance()
+RandomSingleton &RandomSingleton::getInstance()
 {
     if (sInstance == nullptr) 
     {
@@ -62,7 +58,7 @@ RandomSingleton &RandomSingleton::GetInstance()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-int RandomSingleton::Next()
+int RandomSingleton::next()
 {
     return rand();
 }
@@ -74,7 +70,7 @@ int RandomSingleton::Next()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-int RandomSingleton::Next(int total)
+int RandomSingleton::next(int total)
 {
   if (0 == total)
   {
@@ -90,7 +86,7 @@ int RandomSingleton::Next(int total)
 //  Notes:
 //
 //----------------------------------------------------------------------------
-int RandomSingleton::Next(int start, int end)
+int RandomSingleton::next(int start, int end)
 {
   int total = end - start;
 

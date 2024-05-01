@@ -1,14 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: mySqlTest.cpp$
+//  Workfile: randomTest.cpp
 //
-//  $Revision: X$
-//
-//  $Copyright: Jim Wright 2024
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is the test of the mySql Class
@@ -25,7 +19,7 @@
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
-RandomSingleton &gRandomNumber = RandomSingleton::GetInstance();
+RandomSingleton &gRandomNumber = RandomSingleton::getInstance();
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -40,9 +34,17 @@ int main(int argc, char* argv[])
   double addAmount = 0.01;
   int rc=0;
 
-  for(int i=0;i<30;i++)
+  for(int i=0;i<10;i++)
   {
-    std::cout << "Rand number:" << gRandomNumber.Next(100) << "\n";
+    std::cout << "Rand number:" << gRandomNumber.next() << "\n";
+  }
+  for(int i=0;i<10;i++)
+  {
+    std::cout << "Rand number:" << gRandomNumber.next(100) << "\n";
+  }
+  for(int i=0;i<10;i++)
+  {
+    std::cout << "Rand number:" << gRandomNumber.next(200,400) << "\n";
   }
 
   return rc;

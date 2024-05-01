@@ -1,12 +1,8 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: randomSingleton.h$
+//  Workfile: randomSingleton.h
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
 //     This is a singleton for dealing with a random number that is predictable
@@ -36,10 +32,10 @@ class RandomSingleton
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    static RandomSingleton &GetInstance();
-    int Next();
-    int Next(int total);
-    int Next(int start, int end);
+    static RandomSingleton &getInstance();
+    int next();
+    int next(int total);
+    int next(int start, int end);
 
   private:
     //----------------------------------------------------------------------------

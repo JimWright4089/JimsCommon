@@ -1,15 +1,10 @@
 //----------------------------------------------------------------------------
 //
-//  $Workfile: sqlConnection.cpp$
+//  Workfile: mqtt.cpp
 //
-//  $Revision: X$
-//
-//  Modification History:
-//  $Log:
-//  $
+//  Copyright: Jim Wright 2024
 //
 //  Notes:
-//     This is the code for the Battery object
 //
 //----------------------------------------------------------------------------
 
@@ -65,7 +60,7 @@ MQTT::~MQTT()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-MQTT &MQTT::GetInstance()
+MQTT &MQTT::getInstance()
 {
   if (sInstance == nullptr) 
   {

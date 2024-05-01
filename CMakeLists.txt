@@ -12,19 +12,19 @@ target_include_directories(JimsCommon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(JimsCommon jsoncpp)
 INCLUDE_DIRECTORIES( ./include )
 
-add_executable(SinMQTTTest
+add_executable(sinMqttTest
 ./source/connection.cpp
 ./source/mqtt.cpp
 ./test/mqttSinTest.cpp
 )
-target_link_libraries(SinMQTTTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES} mysqlcppconn)
+target_link_libraries(sinMqttTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
 
-add_executable(mySQLTest
+add_executable(mySqlTest
 ./source/connection.cpp
 ./source/mySqlDatabase.cpp
 ./test/mySqlTest.cpp
 )
-target_link_libraries(mySQLTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES} mysqlcppconn)
+target_link_libraries(mySqlTest jsoncpp ${Boost_LIBRARIES} mysqlcppconn)
 
 add_executable(randomTest
 ./source/randomSingleton.cpp
