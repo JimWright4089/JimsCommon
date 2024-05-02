@@ -203,5 +203,5 @@ void MQTT::connect(Connection connect)
     exit(EXIT_FAILURE);
   }
 
-  std::this_thread::sleep_for(5000ms);
+  std::this_thread::sleep_for(2000ms);
 }
