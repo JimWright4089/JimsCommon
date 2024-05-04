@@ -31,3 +31,8 @@ add_executable(randomTest
 ./test/randomTest.cpp
 )
 
+add_executable(stopWatchTest
+./source/stopWatch.cpp
+./test/stopWatchTest.cpp
+)
+
