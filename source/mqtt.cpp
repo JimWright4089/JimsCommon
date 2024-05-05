@@ -28,7 +28,6 @@ using namespace std::chrono_literals;
 //  Global and Static data
 //----------------------------------------------------------------------------
 extern bool gVerboseMQTT;
-std::shared_ptr<MQTT> MQTT::sInstance = nullptr;
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -51,22 +50,6 @@ MQTT::MQTT()
 MQTT::~MQTT()
 {
   MQTTAsync_destroy(&mClient);
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   Return the singleton
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-MQTT &MQTT::getInstance()
-{
-  if (sInstance == nullptr) 
-  {
-    sInstance = std::shared_ptr<MQTT>(new MQTT());
-  }
-  return *sInstance;
 }
 
 //----------------------------------------------------------------------------

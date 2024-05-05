@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------
 //
-//  Workfile: mySQLDatabae.h
+//  Workfile: mySQLDB.h
 //
 //  Copyright: Jim Wright 2024
 //
@@ -8,8 +8,8 @@
 //     This is the mySQL database handler
 //
 //----------------------------------------------------------------------------
-#ifndef MY_SQL_DATABASE_H
-#define MY_SQL_DATABASE_H
+#ifndef MY_SQL_DB_H
+#define MY_SQL_DB_H
 
 //----------------------------------------------------------------------------
 //  Includes
@@ -31,27 +31,26 @@
 //      Handle MySQL Databases
 //
 //----------------------------------------------------------------------------
-class MySQLDatabase
+class MySQLDB
 {
   public:
 
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    static MySQLDatabase &getInstance();
+    MySQLDB();  
+    ~MySQLDB();
     void loadConfiguration(std::string fileName);
     void openDatabase();
     std::shared_ptr<sql::ResultSet> executeStatementWithResult(std::string sqlCommand, int &returnValue);
     void executeStatement(std::string sqlCommand, int &returnValue);
     int getInt(std::string sqlCommand, int &returnValue);
     std::string getString(std::string sqlCommand, int &returnValue);
-    ~MySQLDatabase();
 
-  private:
+  protected:
     //----------------------------------------------------------------------------
     //  Class Atributes
     //----------------------------------------------------------------------------
-    static std::shared_ptr<MySQLDatabase> sInstance;
     Connection mConnection;
     sql::Driver* mDriver;
     sql::Connection* mConnect;
@@ -59,6 +58,5 @@ class MySQLDatabase
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    MySQLDatabase();  
 };
 #endif

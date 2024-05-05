@@ -36,6 +36,7 @@
 //  Global and Static data
 //----------------------------------------------------------------------------
 bool gVerboseMQTT = true;
+std::shared_ptr<MQTT> gMqtt = std::shared_ptr<MQTT>(new MQTT());
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -48,7 +49,7 @@ void send(char* topic, double value)
 {
   char valueString[31];
   snprintf(valueString,30,"%f",value);
-  MQTT::getInstance().send(topic,valueString,strlen(valueString));
+  gMqtt->send(topic,valueString,strlen(valueString));
 }
 
 //----------------------------------------------------------------------------
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
   mqttConnection.loadFromFile(mqttFilename);
   mqttConnection.print();
 
-  MQTT::getInstance().connect(mqttConnection);
+  gMqtt->connect(mqttConnection);
 
   int count = 0;
   double count1Hz = 0;

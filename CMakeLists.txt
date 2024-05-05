@@ -19,12 +19,28 @@ add_executable(sinMqttTest
 )
 target_link_libraries(sinMqttTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
 
+add_executable(sinMqttSingletonTest
+./source/connection.cpp
+./source/mqtt.cpp
+./source/mqttSingleton.cpp
+./test/mqttSingletonTest.cpp
+)
+target_link_libraries(sinMqttSingletonTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
+
 add_executable(mySqlTest
 ./source/connection.cpp
-./source/mySqlDatabase.cpp
+./source/mySqlDB.cpp
 ./test/mySqlTest.cpp
 )
 target_link_libraries(mySqlTest jsoncpp ${Boost_LIBRARIES} mysqlcppconn)
+
+add_executable(mySqlSingletonTest
+./source/connection.cpp
+./source/mySqlDB.cpp
+./source/mySqlDBSingleton.cpp
+./test/mySqlTest.cpp
+)
+target_link_libraries(mySqlSingletonTest jsoncpp ${Boost_LIBRARIES} mysqlcppconn)
 
 add_executable(randomTest
 ./source/randomSingleton.cpp

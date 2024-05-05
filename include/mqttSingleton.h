@@ -8,17 +8,13 @@
 //     This is a singleton publishing and subscribing to mqtt topics
 //
 //----------------------------------------------------------------------------
-#ifndef MQTT_H
-#define MQTT_H
+#ifndef MQTT_SINGLETON_H
+#define MQTT_SINGLETON_H
 
 //----------------------------------------------------------------------------
 //  Includes
 //----------------------------------------------------------------------------
-#include "MQTTAsync.h"
-#include "connection.h"
-
-const int QOS = 1;
-const int TIMEOUT = 10000L;
+#include "mqtt.h"
 
 //----------------------------------------------------------------------------
 //  Class Declarations
@@ -30,28 +26,19 @@ const int TIMEOUT = 10000L;
 //      
 //
 //----------------------------------------------------------------------------
-class MQTT
+class MQTTSingleton
 {
   public:
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    MQTT();
-    ~MQTT();
-    void connect(Connection connect);
-    void send(char* topic, char* payload, int payloadLength);
-    static void onConnect(void* context, MQTTAsync_successData* response);
-    static void onConnectFailure(void* context, MQTTAsync_failureData* response);
-    static void onSend(void* context, MQTTAsync_successData* response);
-    static void onDisconnect(void* context, MQTTAsync_successData* response);
-    static void connlost(void *context, char *cause);
+    static MQTT &getInstance();
     
   private:
     //----------------------------------------------------------------------------
     //  Class Atributes
     //----------------------------------------------------------------------------
-    MQTTAsync mClient;
-    volatile MQTTAsync_token mDeliveredtoken;
+    static std::shared_ptr<MQTT> sInstance;
 
     //----------------------------------------------------------------------------
     //  Class Methods
