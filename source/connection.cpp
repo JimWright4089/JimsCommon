@@ -146,7 +146,7 @@ std::string Connection::getJson()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-void Connection::loadFromFile(std::string fileName)
+bool Connection::loadFromFile(std::string fileName)
 {
   Json::Value status;
 
@@ -155,6 +155,13 @@ void Connection::loadFromFile(std::string fileName)
 
   reader.parse(ifs, status);
   parseJson(status);
+
+  if(("" == mHost)&&("" == mUser))
+  {
+    return false;
+  }
+
+  return true;
 }
 
 //----------------------------------------------------------------------------

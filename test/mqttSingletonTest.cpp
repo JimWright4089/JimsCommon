@@ -14,44 +14,41 @@
 //----------------------------------------------------------------------------
 #include <iostream>
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include "MQTTAsync.h"
 #include "math.h"
 #include "connection.h"
-#include "mySqlDB.h"
+#include "mqttSingleton.h"
+
+//----------------------------------------------------------------------------
+//  Defines
+//----------------------------------------------------------------------------
+#define TOPIC1HZ    (char*)"sin/1hz/value"
+#define TOPIC2HZ    (char*)"sin/2hz/value"
+#define TOPIC5HZ   (char*)"sin/5hz/value"
+#define QOS         1
+#define TIMEOUT     10000L
 
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
-bool gVerboseDB = true;
-std::shared_ptr<MySQLDB> gDatabase = std::shared_ptr<MySQLDB>(new MySQLDB());
+bool gVerboseMQTT = true;
 
 //----------------------------------------------------------------------------
 //  Purpose:
-//   Insert a row
+//   Send text to a topic
 //
 //  Notes:
 //
 //----------------------------------------------------------------------------
-void insert(double value)
+void send(char* topic, double value)
 {
-  int returnValue = 0;
-  std::string sqlCommand = "insert into sin_test(sin_value) values(" + std::to_string(value) + ");";
-  gDatabase->executeStatement(sqlCommand, returnValue);
-  std::cout << "Return value:" << returnValue << "\n";
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   delete all the rows
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void deleteAll(void)
-{
-  int returnValue = 0;
-  std::string sqlCommand = "delete from sin_test;";
-  gDatabase->executeStatement(sqlCommand, returnValue);
-  std::cout << "Return value:" << returnValue << "\n";
+  char valueString[31];
+  snprintf(valueString,30,"%f",value);
+  MQTTSingleton::getInstance().send(topic,valueString,strlen(valueString));
 }
 
 //----------------------------------------------------------------------------
@@ -63,8 +60,6 @@ void deleteAll(void)
 //----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  double count = 0;
-  double addAmount = 0.01;
   int rc=0;
   if(argc != 2)
   {
@@ -72,18 +67,47 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  std::string sqlFilename(argv[1]);
+  std::string mqttFilename(argv[1]);
+  Connection mqttConnection;
+  mqttConnection.loadFromFile(mqttFilename);
+  mqttConnection.print();
 
-  gDatabase->loadConfiguration(sqlFilename);
-  gDatabase->openDatabase();
+  MQTTSingleton::getInstance().connect(mqttConnection);
 
-  deleteAll();
+  int count = 0;
+  double count1Hz = 0;
+  double count2Hz = 0;
+  double count5Hz = 0;
+  double addAmount = 0.01;
 
   for(int i=0;i<30;i++)
   {
-    count+=addAmount;
+    count++;
 
-    insert(sin(count));
+    if(0==(count%2))
+    {
+      count5Hz += addAmount;
+      send(TOPIC5HZ, sin(count5Hz));
+      usleep(10000L);
+    }
+
+    if(5 == count)
+    {
+      count2Hz += addAmount;
+      send(TOPIC2HZ, sin(count2Hz));
+      usleep(10000L);
+    }
+
+    if(count >= 10)
+    {
+      count2Hz += addAmount;
+      send(TOPIC2HZ, sin(count2Hz));
+      usleep(10000L);
+      count1Hz += addAmount;
+      send(TOPIC1HZ, sin(count1Hz));
+      count = 0;
+    }
+
     usleep(100000L);
   }
 

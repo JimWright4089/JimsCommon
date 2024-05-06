@@ -1,74 +1,48 @@
 //----------------------------------------------------------------------------
 //
-//  Workfile: connection.h
+//  Workfile: mySQLDBSingleton.h
 //
 //  Copyright: Jim Wright 2024
 //
 //  Notes:
-//     This is the code for coneecting to things with a userid and password
+//     This is the mySQL database handler
 //
 //----------------------------------------------------------------------------
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef MY_SQL_DB_SINGLETON_H
+#define MY_SQL_DB_SINGLETON_H
 
 //----------------------------------------------------------------------------
 //  Includes
 //----------------------------------------------------------------------------
-#include <string>
-#include <jsoncpp/json/json.h>
+#include "mySqlDB.h"
 
 //----------------------------------------------------------------------------
 //  Class Declarations
 //----------------------------------------------------------------------------
 //
-// Class Name: Connection
+// Class Name: MySQLDatabase
 // 
 // Purpose:
-//      The storage location for the SQL/MQTT Connection
+//      Handle MySQL Databases
 //
 //----------------------------------------------------------------------------
-class Connection
+class MySQLDBSingleton
 {
   public:
 
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    Connection();
-    Connection(const Json::Value connection);
-    Connection(std::string jsonBody);  
-    virtual ~Connection() {}
-    void print(void);
-    std::string getJson();
-    bool loadFromFile(std::string fileName);
+    static MySQLDB &getInstance();
 
-    std::string getHost();
-    std::string getUser();
-    std::string getPassword();
-    std::string getDatabase();
-    int getPort();
-    std::string getClientID();
-    std::string getMQTTAddress();
-    std::string getSSLAddress();
-    std::string getCACert();
-    std::string getKeyStore();
-
-  private:
+  protected:
     //----------------------------------------------------------------------------
     //  Class Atributes
     //----------------------------------------------------------------------------
-    std::string mHost = "";
-    std::string mUser = "";
-    std::string mPassword = "";
-    std::string mDatabase = "";
-    int mPort = 0;
-    std::string mClientID = "";
-    std::string mCACert = "";
-    std::string mKeyStore = "";
+    static std::shared_ptr<MySQLDB> sInstance;
 
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    void parseJson(const Json::Value connection);
 };
 #endif

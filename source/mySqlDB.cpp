@@ -14,29 +14,12 @@
 #include <iostream>
 #include <fstream>
 #include <cppconn/statement.h>
-#include "mySqlDatabase.h"
+#include "mySqlDB.h"
 
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
 extern bool gVerboseDB;
-std::shared_ptr<MySQLDatabase> MySQLDatabase::sInstance = nullptr;
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   GetInstance
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-MySQLDatabase &MySQLDatabase::getInstance()
-{
-    if (sInstance == nullptr) 
-    {
-        sInstance = std::shared_ptr<MySQLDatabase>(new MySQLDatabase());
-    }
-    return *sInstance;
-}
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -45,49 +28,10 @@ MySQLDatabase &MySQLDatabase::getInstance()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-MySQLDatabase::MySQLDatabase() :
+MySQLDB::MySQLDB() :
   mDriver(NULL),
   mConnect(NULL)
 {
-
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   load configuration from file
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MySQLDatabase::loadConfiguration(std::string fileName)
-{
-  std::string sqlFilename(fileName);
-  mConnection.loadFromFile(sqlFilename);
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   Open the database
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MySQLDatabase::openDatabase()
-{
-  if(NULL == mDriver)
-  {
-    mDriver = sql::mysql::get_driver_instance();
-  }
-
-  if(nullptr == mConnect)
-  {
-    mConnect = mDriver->connect(
-          mConnection.getHost().c_str(),
-          mConnection.getUser().c_str(),
-          mConnection.getPassword().c_str());
-
-    mConnect->setSchema(mConnection.getDatabase().c_str());
-  }
 
 }
 
@@ -98,7 +42,7 @@ void MySQLDatabase::openDatabase()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-MySQLDatabase::~MySQLDatabase()
+MySQLDB::~MySQLDB()
 {
   if(NULL != mConnect)
   {
@@ -108,14 +52,68 @@ MySQLDatabase::~MySQLDatabase()
 
 //----------------------------------------------------------------------------
 //  Purpose:
+//   load configuration from file
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MySQLDB::loadConfiguration(std::string fileName)
+{
+  std::string sqlFilename(fileName);
+  if(false == mConnection.loadFromFile(sqlFilename))
+  {
+    std::cout << "The connection is blank\n";
+  }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Open the database
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MySQLDB::openDatabase()
+{
+  if(NULL == mDriver)
+  {
+    mDriver = sql::mysql::get_driver_instance();
+  }
+
+  if((""==mConnection.getHost())&&(""==mConnection.getUser()))
+  {
+    std::cout << "The connection is blank not connecting to database\n";
+  }
+  else
+  {
+    if(nullptr == mConnect)
+    {
+      mConnect = mDriver->connect(
+            mConnection.getHost().c_str(),
+            mConnection.getUser().c_str(),
+            mConnection.getPassword().c_str());
+
+      mConnect->setSchema(mConnection.getDatabase().c_str());
+    }
+  }
+
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
 //   Run a query
 //
 //  Notes:
 //
 //----------------------------------------------------------------------------
-void MySQLDatabase::executeStatement(std::string sqlCommand, int &returnValue)
+void MySQLDB::executeStatement(std::string sqlCommand, int &returnValue)
 {
   returnValue = EXIT_FAILURE;
+
+  if(NULL == mConnect)
+  {
+    return;
+  }
 
   if(true == gVerboseDB)
   {
@@ -147,9 +145,14 @@ void MySQLDatabase::executeStatement(std::string sqlCommand, int &returnValue)
 //  Notes:
 //
 //----------------------------------------------------------------------------
-std::shared_ptr<sql::ResultSet> MySQLDatabase::executeStatementWithResult(std::string sqlCommand, int &returnValue)
+std::shared_ptr<sql::ResultSet> MySQLDB::executeStatementWithResult(std::string sqlCommand, int &returnValue)
 {
   returnValue = EXIT_FAILURE;
+
+  if(NULL == mConnect)
+  {
+    return nullptr;
+  }
 
   if(true == gVerboseDB)
   {
@@ -183,7 +186,7 @@ std::shared_ptr<sql::ResultSet> MySQLDatabase::executeStatementWithResult(std::s
 //  Notes:
 //
 //----------------------------------------------------------------------------
-int MySQLDatabase::getInt(std::string sqlCommand, int &returnValue)
+int MySQLDB::getInt(std::string sqlCommand, int &returnValue)
 {
   returnValue = EXIT_FAILURE;
   std::shared_ptr<sql::ResultSet> results = std::shared_ptr<sql::ResultSet>(executeStatementWithResult(sqlCommand, returnValue));
@@ -209,7 +212,7 @@ int MySQLDatabase::getInt(std::string sqlCommand, int &returnValue)
 //  Notes:
 //
 //----------------------------------------------------------------------------
-std::string MySQLDatabase::getString(std::string sqlCommand, int &returnValue)
+std::string MySQLDB::getString(std::string sqlCommand, int &returnValue)
 {
   std::shared_ptr<sql::ResultSet> results = std::shared_ptr<sql::ResultSet> (executeStatementWithResult(sqlCommand, returnValue));
 

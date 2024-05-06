@@ -16,13 +16,12 @@
 #include <string>
 #include "math.h"
 #include "connection.h"
-#include "mySqlDB.h"
+#include "mySqlDBSingleton.h"
 
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
 bool gVerboseDB = true;
-std::shared_ptr<MySQLDB> gDatabase = std::shared_ptr<MySQLDB>(new MySQLDB());
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -33,9 +32,10 @@ std::shared_ptr<MySQLDB> gDatabase = std::shared_ptr<MySQLDB>(new MySQLDB());
 //----------------------------------------------------------------------------
 void insert(double value)
 {
+  MySQLDB database = MySQLDBSingleton::getInstance();
   int returnValue = 0;
   std::string sqlCommand = "insert into sin_test(sin_value) values(" + std::to_string(value) + ");";
-  gDatabase->executeStatement(sqlCommand, returnValue);
+  database.executeStatement(sqlCommand, returnValue);
   std::cout << "Return value:" << returnValue << "\n";
 }
 
@@ -48,9 +48,10 @@ void insert(double value)
 //----------------------------------------------------------------------------
 void deleteAll(void)
 {
+  MySQLDB database = MySQLDBSingleton::getInstance();
   int returnValue = 0;
   std::string sqlCommand = "delete from sin_test;";
-  gDatabase->executeStatement(sqlCommand, returnValue);
+  database.executeStatement(sqlCommand, returnValue);
   std::cout << "Return value:" << returnValue << "\n";
 }
 
@@ -72,10 +73,11 @@ int main(int argc, char* argv[])
     return -1;
   }
 
+  MySQLDB database = MySQLDBSingleton::getInstance();
   std::string sqlFilename(argv[1]);
 
-  gDatabase->loadConfiguration(sqlFilename);
-  gDatabase->openDatabase();
+  database.loadConfiguration(sqlFilename);
+  database.openDatabase();
 
   deleteAll();
 

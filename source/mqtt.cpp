@@ -28,7 +28,8 @@ using namespace std::chrono_literals;
 //  Global and Static data
 //----------------------------------------------------------------------------
 extern bool gVerboseMQTT;
-std::shared_ptr<MQTT> MQTT::sInstance = nullptr;
+void (*MQTT::mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message) = NULL;
+std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>MQTT::mMesageQueue = std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>(new std::queue<std::shared_ptr<MQTTMessage>>);
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -51,22 +52,6 @@ MQTT::MQTT()
 MQTT::~MQTT()
 {
   MQTTAsync_destroy(&mClient);
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   Return the singleton
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-MQTT &MQTT::getInstance()
-{
-  if (sInstance == nullptr) 
-  {
-    sInstance = std::shared_ptr<MQTT>(new MQTT());
-  }
-  return *sInstance;
 }
 
 //----------------------------------------------------------------------------
@@ -145,6 +130,33 @@ void MQTT::onConnect(void* context, MQTTAsync_successData* response)
 
 //----------------------------------------------------------------------------
 //  Purpose:
+//   on subscribe
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onSubscribe(void* context, MQTTAsync_successData* response)
+{
+  if(true == gVerboseMQTT)
+  {
+    std::cout << "Subscribe succeeded" << std::endl;
+  }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   on subscribe
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onSubscribeFailure(void* context, MQTTAsync_failureData* response)
+{
+  std::cout << "Subscribe failed, rc:" << (response ? response->code : 0) << std::endl;
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
 //   Send a text packet
 //
 //  Notes:
@@ -171,6 +183,84 @@ void MQTT::send(char* topic, char* payload, int payloadLength)
 
 //----------------------------------------------------------------------------
 //  Purpose:
+//   subscribe to a topic
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::subscribe(char* topic)
+{
+  int rc;
+  if(true == gVerboseMQTT)
+  {
+    std::cout << "Subscribing to topic:" << topic << std::endl;
+  }
+
+  MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+  opts.onSuccess = onSubscribe;
+  opts.onFailure = onSubscribeFailure;
+  opts.context = mClient;
+  if ((rc = MQTTAsync_subscribe(mClient, topic, QOS, &opts)) != MQTTASYNC_SUCCESS)
+  {
+    std::cout << "Failed to start subscribe, return code:" << rc << std::endl;
+  }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Receive a message and send it to the listeners
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+int MQTT::messageArrived(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
+{
+  if(true == gVerboseMQTT)
+  {
+    std::string payload((char*)message->payload);
+    std::cout << "Message arived:" << topicName << " len:" << topicLen << " message:" << payload << "\n"; 
+  }
+
+  if(NULL != mMessageArrivedFunction)
+  {
+    mMessageArrivedFunction(topicName, topicLen, message);
+  }
+
+  std::shared_ptr<MQTTMessage> mqttMessage = std::shared_ptr<MQTTMessage>(new MQTTMessage(topicName, (char*)message->payload));
+  mMesageQueue->push(mqttMessage);  
+
+  MQTTAsync_freeMessage(&message);
+  MQTTAsync_free(topicName);
+
+  return 1;
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Set the user function
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::setMessageArrivedFunction(void (*messageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message))
+{
+  mMessageArrivedFunction = messageArrivedFunction;
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Return the queue
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>> MQTT::getMessageQueue()
+{
+  return mMesageQueue;
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
 //   connect to a server
 //
 //  Notes:
@@ -188,7 +278,7 @@ void MQTT::connect(Connection connect)
                 connect.getClientID().c_str(),
                 MQTTCLIENT_PERSISTENCE_NONE, NULL);
 
-  MQTTAsync_setCallbacks(mClient, NULL, connlost, NULL, NULL);
+  MQTTAsync_setCallbacks(mClient, NULL, connlost, messageArrived, NULL);
   conn_opts.keepAliveInterval = 20;
   conn_opts.cleansession = 1;
   conn_opts.onSuccess = onConnect;
@@ -203,5 +293,5 @@ void MQTT::connect(Connection connect)
     exit(EXIT_FAILURE);
   }
 
-  std::this_thread::sleep_for(5000ms);
+  std::this_thread::sleep_for(2000ms);
 }
