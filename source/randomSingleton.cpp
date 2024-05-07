@@ -31,8 +31,7 @@ std::shared_ptr<RandomSingleton> RandomSingleton::sInstance = nullptr;
 //----------------------------------------------------------------------------
 RandomSingleton::RandomSingleton()
 {
-//    srand((unsigned)time(0));
-    srand(100);
+    srand((unsigned)time(0));
 }
 
 //----------------------------------------------------------------------------
