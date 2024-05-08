@@ -67,12 +67,8 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  std::string mqttFilename(argv[1]);
-  Connection mqttConnection;
-  mqttConnection.loadFromFile(mqttFilename);
-  mqttConnection.print();
-
-  MQTTSingleton::getInstance().connect(mqttConnection);
+  MQTTSingleton::getInstance().loadConfiguration(argv[1]);
+  MQTTSingleton::getInstance().openMQTT();
 
   int count = 0;
   double count1Hz = 0;

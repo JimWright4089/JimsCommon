@@ -15,6 +15,7 @@ INCLUDE_DIRECTORIES( ./include )
 add_executable(sinMqttTest
 ./source/connection.cpp
 ./source/mqtt.cpp
+./source/mqttMessage.cpp
 ./test/mqttSinTest.cpp
 )
 target_link_libraries(sinMqttTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
@@ -22,6 +23,7 @@ target_link_libraries(sinMqttTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
 add_executable(sinMqttSingletonTest
 ./source/connection.cpp
 ./source/mqtt.cpp
+./source/mqttMessage.cpp
 ./source/mqttSingleton.cpp
 ./test/mqttSingletonTest.cpp
 )
