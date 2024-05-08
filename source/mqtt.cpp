@@ -68,6 +68,12 @@ void MQTT::loadConfiguration(std::string fileName)
   {
     std::cout << "The connection is blank\n";
   }
+
+  if(true == gVerboseMQTT)
+  {
+    mConnection.print();
+  }
+
 }
 
 //----------------------------------------------------------------------------
