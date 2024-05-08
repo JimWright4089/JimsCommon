@@ -56,103 +56,55 @@ MQTT::~MQTT()
 
 //----------------------------------------------------------------------------
 //  Purpose:
-//   connection lost call back
+//   load configuration from file
 //
 //  Notes:
 //
 //----------------------------------------------------------------------------
-void MQTT::connlost(void *context, char *cause)
+void MQTT::loadConfiguration(std::string fileName)
 {
-  MQTTAsync client = (MQTTAsync)context;
+  std::string sqlFilename(fileName);
+  if(false == mConnection.loadFromFile(sqlFilename))
+  {
+    std::cout << "The connection is blank\n";
+  }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   connect to a server
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::openMQTT()
+{
+  int rc=0;
   MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
-  int rc;
-  std::cout << "\nConnection lost\n";
-  std::cout << "     cause:" <<  cause << "\n";
-  std::cout << "Reconnecting\n";
+  MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+  MQTTAsync_token token;
+
+  MQTTAsync_create(&mClient,
+                mConnection.getMQTTAddress().c_str(),
+                mConnection.getClientID().c_str(),
+                MQTTCLIENT_PERSISTENCE_NONE, NULL);
+
+  MQTTAsync_setCallbacks(mClient, NULL, connlost, messageArrived, NULL);
   conn_opts.keepAliveInterval = 20;
   conn_opts.cleansession = 1;
-  if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
+  conn_opts.onSuccess = onConnect;
+  conn_opts.onFailure = onConnectFailure;
+  conn_opts.context = mClient;
+  conn_opts.username = mConnection.getUser().c_str();
+  conn_opts.password = mConnection.getPassword().c_str();
+
+  if ((rc = MQTTAsync_connect(mClient, &conn_opts)) != MQTTASYNC_SUCCESS)
   {
-    std::cout << "Failed to start connect, return code " << rc << "\n";
+    std::cout << "Failed to start connect, return code:" << rc << "\n";
+    exit(EXIT_FAILURE);
   }
-}
 
-//----------------------------------------------------------------------------
-//  Purpose:
-//   disconnect call back
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MQTT::onDisconnect(void* context, MQTTAsync_successData* response)
-{
-  std::cout << "Successful disconnection\n";
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   on send call back
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MQTT::onSend(void* context, MQTTAsync_successData* response)
-{
-  if(true == gVerboseMQTT)
-  {
-    std::cout << "Message with token value:" << response->token << " delivery confirmed\n";
-  }
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   connection failure call back
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MQTT::onConnectFailure(void* context, MQTTAsync_failureData* response)
-{
-  std::cout << "Connect failed, rc:" << (response ? std::to_string(response->code) : "0") << "\n";
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   on connect call back
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MQTT::onConnect(void* context, MQTTAsync_successData* response)
-{
-  std::cout << "Successful connection\n";
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   on subscribe
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MQTT::onSubscribe(void* context, MQTTAsync_successData* response)
-{
-  if(true == gVerboseMQTT)
-  {
-    std::cout << "Subscribe succeeded" << std::endl;
-  }
-}
-
-//----------------------------------------------------------------------------
-//  Purpose:
-//   on subscribe
-//
-//  Notes:
-//
-//----------------------------------------------------------------------------
-void MQTT::onSubscribeFailure(void* context, MQTTAsync_failureData* response)
-{
-  std::cout << "Subscribe failed, rc:" << (response ? response->code : 0) << std::endl;
+  std::this_thread::sleep_for(2000ms);
 }
 
 //----------------------------------------------------------------------------
@@ -261,37 +213,101 @@ std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>> MQTT::getMessageQueue(
 
 //----------------------------------------------------------------------------
 //  Purpose:
-//   connect to a server
+//   connection lost call back
 //
 //  Notes:
 //
 //----------------------------------------------------------------------------
-void MQTT::connect(Connection connect)
+void MQTT::connlost(void *context, char *cause)
 {
-  int rc=0;
+  MQTTAsync client = (MQTTAsync)context;
   MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
-  MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
-  MQTTAsync_token token;
-
-  MQTTAsync_create(&mClient,
-                connect.getMQTTAddress().c_str(),
-                connect.getClientID().c_str(),
-                MQTTCLIENT_PERSISTENCE_NONE, NULL);
-
-  MQTTAsync_setCallbacks(mClient, NULL, connlost, messageArrived, NULL);
+  int rc;
+  std::cout << "\nConnection lost\n";
+  std::cout << "     cause:" <<  cause << "\n";
+  std::cout << "Reconnecting\n";
   conn_opts.keepAliveInterval = 20;
   conn_opts.cleansession = 1;
-  conn_opts.onSuccess = onConnect;
-  conn_opts.onFailure = onConnectFailure;
-  conn_opts.context = mClient;
-  conn_opts.username = connect.getUser().c_str();
-  conn_opts.password = connect.getPassword().c_str();
-
-  if ((rc = MQTTAsync_connect(mClient, &conn_opts)) != MQTTASYNC_SUCCESS)
+  if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
   {
-    std::cout << "Failed to start connect, return code:" << rc << "\n";
-    exit(EXIT_FAILURE);
+    std::cout << "Failed to start connect, return code " << rc << "\n";
   }
+}
 
-  std::this_thread::sleep_for(2000ms);
+//----------------------------------------------------------------------------
+//  Purpose:
+//   disconnect call back
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onDisconnect(void* context, MQTTAsync_successData* response)
+{
+  std::cout << "Successful disconnection\n";
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   on send call back
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onSend(void* context, MQTTAsync_successData* response)
+{
+  if(true == gVerboseMQTT)
+  {
+    std::cout << "Message with token value:" << response->token << " delivery confirmed\n";
+  }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   connection failure call back
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onConnectFailure(void* context, MQTTAsync_failureData* response)
+{
+  std::cout << "Connect failed, rc:" << (response ? std::to_string(response->code) : "0") << "\n";
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   on connect call back
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onConnect(void* context, MQTTAsync_successData* response)
+{
+  std::cout << "Successful connection\n";
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   on subscribe
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onSubscribe(void* context, MQTTAsync_successData* response)
+{
+  if(true == gVerboseMQTT)
+  {
+    std::cout << "Subscribe succeeded" << std::endl;
+  }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   on subscribe
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::onSubscribeFailure(void* context, MQTTAsync_failureData* response)
+{
+  std::cout << "Subscribe failed, rc:" << (response ? response->code : 0) << std::endl;
 }
