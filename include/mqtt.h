@@ -21,6 +21,7 @@
 
 const int QOS = 1;
 const int TIMEOUT = 10000L;
+const int VERBOSE_MESSAGE_DISPLAY_MOD = 2000;
 
 //----------------------------------------------------------------------------
 //  Class Declarations
@@ -58,6 +59,7 @@ class MQTT
     volatile MQTTAsync_token mDeliveredtoken;
     static void (*mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message);
     static std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>mMesageQueue;
+    static int mVerboseCount;
 
     //----------------------------------------------------------------------------
     //  Class Methods

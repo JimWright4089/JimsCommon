@@ -30,6 +30,7 @@ using namespace std::chrono_literals;
 extern bool gVerboseMQTT;
 void (*MQTT::mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message) = NULL;
 std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>MQTT::mMesageQueue = std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>(new std::queue<std::shared_ptr<MQTTMessage>>);
+int MQTT::mVerboseCount = 0;
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -175,8 +176,12 @@ int MQTT::messageArrived(void *context, char *topicName, int topicLen, MQTTAsync
 {
   if(true == gVerboseMQTT)
   {
-    std::string payload((char*)message->payload);
-    std::cout << "Message arived:" << topicName << " len:" << topicLen << " message:" << payload << "\n"; 
+    if(0==(mVerboseCount%VERBOSE_MESSAGE_DISPLAY_MOD))
+    {
+      std::string payload((char*)message->payload);
+      std::cout << "Message arived:" << topicName << " len:" << topicLen << " message:" << payload << "\n"; 
+    }
+    mVerboseCount++;
   }
 
   if(NULL != mMessageArrivedFunction)
