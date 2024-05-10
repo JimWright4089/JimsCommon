@@ -118,13 +118,15 @@ void Connection::parseJson(const Json::Value connection)
 void Connection::print(void)
 {
   std::cout << "host     :" << mHost << "\n";
-  std::cout << "user     :" << mUser << "\n";
-  std::cout << "password :" << mPassword << "\n";
+  std::cout << "user     :" << getUser() << "\n";
+  std::cout << "password :" << getPassword() << "\n";
   std::cout << "database :" << mDatabase << "\n";
   std::cout << "port     :" << mPort << "\n";
   std::cout << "client id:" << mClientID << "\n";
   std::cout << "ca cert  :" << mCACert << "\n";
   std::cout << "keystr   :" << mKeyStore << "\n";
+  std::cout << "MQTT addr:" << getMQTTAddress() << "\n";
+  std::cout << "SSL  addr:" << getSSLAddress() << "\n";
 }
 
 //----------------------------------------------------------------------------

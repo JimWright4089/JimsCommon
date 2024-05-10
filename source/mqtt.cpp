@@ -91,6 +91,9 @@ void MQTT::openMQTT()
   MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
   MQTTAsync_token token;
 
+  std::string user = mConnection.getUser();
+  std::string password = mConnection.getPassword();
+
   MQTTAsync_create(&mClient,
                 mConnection.getMQTTAddress().c_str(),
                 mConnection.getClientID().c_str(),
@@ -102,8 +105,8 @@ void MQTT::openMQTT()
   conn_opts.onSuccess = onConnect;
   conn_opts.onFailure = onConnectFailure;
   conn_opts.context = mClient;
-  conn_opts.username = mConnection.getUser().c_str();
-  conn_opts.password = mConnection.getPassword().c_str();
+  conn_opts.username = user.c_str();
+  conn_opts.password = password.c_str();
 
   if ((rc = MQTTAsync_connect(mClient, &conn_opts)) != MQTTASYNC_SUCCESS)
   {
