@@ -13,6 +13,7 @@ target_link_libraries(JimsCommon jsoncpp)
 INCLUDE_DIRECTORIES( ./include )
 
 add_executable(sinMqttTest
+./source/randomSingleton.cpp
 ./source/connection.cpp
 ./source/mqtt.cpp
 ./source/mqttMessage.cpp
@@ -21,6 +22,7 @@ add_executable(sinMqttTest
 target_link_libraries(sinMqttTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
 
 add_executable(sinMqttSingletonTest
+./source/randomSingleton.cpp
 ./source/connection.cpp
 ./source/mqtt.cpp
 ./source/mqttMessage.cpp
@@ -30,6 +32,7 @@ add_executable(sinMqttSingletonTest
 target_link_libraries(sinMqttSingletonTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
 
 add_executable(mySqlTest
+./source/randomSingleton.cpp
 ./source/connection.cpp
 ./source/mySqlDB.cpp
 ./test/mySqlTest.cpp
@@ -37,6 +40,7 @@ add_executable(mySqlTest
 target_link_libraries(mySqlTest jsoncpp ${Boost_LIBRARIES} mysqlcppconn)
 
 add_executable(mySqlSingletonTest
+./source/randomSingleton.cpp
 ./source/connection.cpp
 ./source/mySqlDB.cpp
 ./source/mySqlDBSingleton.cpp

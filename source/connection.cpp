@@ -15,7 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include "connection.h"
-
+#include "randomSingleton.h"
 //----------------------------------------------------------------------------
 //  Purpose:
 //   Constructor
@@ -95,6 +95,17 @@ void Connection::parseJson(const Json::Value connection)
   mClientID = connection["clientid"].asString();
   mCACert = connection["cacert"].asString();
   mKeyStore = connection["keystore"].asString();
+
+
+  int loc = 0;
+  loc = mClientID.find(RANDOM_MARK);
+  if(-1 != loc)
+  {
+    int randomNumber = RandomSingleton::getInstance().next();
+    std::string randomString = std::to_string(randomNumber);
+    mClientID = mClientID.replace(loc,RANDOM_MARK.size(),randomString);
+  }
+
 }
 
 //----------------------------------------------------------------------------
