@@ -58,3 +58,8 @@ add_executable(stopWatchTest
 ./test/stopWatchTest.cpp
 )
 
+add_executable(webSocketSimple
+../JimsCommon/source/randomSingleton.cpp
+./test/webSocketSimple.cpp
+)
+target_link_libraries(webSocketSimple jsoncpp paho-mqtt3a ${Boost_LIBRARIES})

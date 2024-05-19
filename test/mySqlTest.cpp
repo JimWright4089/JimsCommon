@@ -14,6 +14,8 @@
 //----------------------------------------------------------------------------
 #include <iostream>
 #include <string>
+#include <iostream> 
+#include <unistd.h> 
 #include "math.h"
 #include "connection.h"
 #include "mySqlDB.h"
