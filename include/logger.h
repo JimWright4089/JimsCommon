@@ -59,6 +59,7 @@ class Logger
     void writeWarning(std::string message);
     void writeError(std::string message);
     void setSeverity(int severity);
+    void flush();
 
   private:
     //----------------------------------------------------------------------------

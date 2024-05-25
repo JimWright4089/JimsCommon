@@ -10,13 +10,9 @@ find_package(jsoncpp REQUIRED)
 
 
 SET(Boost_USE_STATIC_LIBS ON)
-#ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
-#ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
- 
 FIND_PACKAGE( Boost 1.74.0 COMPONENTS program_options REQUIRED )
 FIND_PACKAGE( Boost 1.74.0 COMPONENTS thread log log_setup REQUIRED )
 find_package(Threads)
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 file(GLOB sources ./source/connection.cpp)
 add_library(JimsCommon ${sources}) # STATIC by default

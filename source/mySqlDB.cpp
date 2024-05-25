@@ -117,7 +117,7 @@ void MySQLDB::executeStatement(std::string sqlCommand, int &returnValue)
     return;
   }
 
-  LoggerSingleton::getInstance()->writeInfo("executeStatement:{" + sqlCommand + "}");
+  LoggerSingleton::getInstance()->writeDebug("executeStatement:{" + sqlCommand + "}");
 
   try 
   {
@@ -150,7 +150,7 @@ std::shared_ptr<sql::ResultSet> MySQLDB::executeStatementWithResult(std::string 
     return nullptr;
   }
 
-  LoggerSingleton::getInstance()->writeInfo("executeStatementWithResult:" + sqlCommand + "}");
+  LoggerSingleton::getInstance()->writeDebug("executeStatementWithResult:" + sqlCommand + "}");
 
   try 
   {

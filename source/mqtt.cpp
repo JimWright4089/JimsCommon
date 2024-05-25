@@ -171,7 +171,7 @@ int MQTT::messageArrived(void *context, char *topicName, int topicLen, MQTTAsync
   if(0==(mVerboseCount%VERBOSE_MESSAGE_DISPLAY_MOD))
   {
     std::string payload((char*)message->payload);
-    LoggerSingleton::getInstance()->writeInfo("Message arived:" + std::string(topicName) + " len:" + std::to_string(topicLen) + " message:" + std::string(payload));
+    LoggerSingleton::getInstance()->writeDebug("Message arived:" + std::string(topicName) + " len:" + std::to_string(topicLen) + " message:" + std::string(payload));
   }
   mVerboseCount++;
 
@@ -243,7 +243,7 @@ void MQTT::connlost(void *context, char *cause)
 //----------------------------------------------------------------------------
 void MQTT::onDisconnect(void* context, MQTTAsync_successData* response)
 {
-  LoggerSingleton::getInstance()->writeInfo("Successful disconnection");
+  LoggerSingleton::getInstance()->writeDebug("Successful disconnection");
 }
 
 //----------------------------------------------------------------------------
@@ -255,7 +255,7 @@ void MQTT::onDisconnect(void* context, MQTTAsync_successData* response)
 //----------------------------------------------------------------------------
 void MQTT::onSend(void* context, MQTTAsync_successData* response)
 {
-  LoggerSingleton::getInstance()->writeInfo("Message with token value:" + std::to_string(response->token) + " delivery confirmed");
+  LoggerSingleton::getInstance()->writeDebug("Message with token value:" + std::to_string(response->token) + " delivery confirmed");
 }
 
 //----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ void MQTT::onConnectFailure(void* context, MQTTAsync_failureData* response)
 //----------------------------------------------------------------------------
 void MQTT::onConnect(void* context, MQTTAsync_successData* response)
 {
-  LoggerSingleton::getInstance()->writeInfo("Successful connection");
+  LoggerSingleton::getInstance()->writeInfo("Successful MQTT connection");
 }
 
 //----------------------------------------------------------------------------
@@ -291,7 +291,7 @@ void MQTT::onConnect(void* context, MQTTAsync_successData* response)
 //----------------------------------------------------------------------------
 void MQTT::onSubscribe(void* context, MQTTAsync_successData* response)
 {
-  LoggerSingleton::getInstance()->writeInfo("Subscribe succeeded");
+  LoggerSingleton::getInstance()->writeDebug("Subscribe succeeded");
 }
 
 //----------------------------------------------------------------------------
