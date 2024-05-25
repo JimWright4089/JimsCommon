@@ -14,12 +14,12 @@
 #include <iostream>
 #include <fstream>
 #include <cppconn/statement.h>
+#include "loggerSingleton.h"
 #include "mySqlDB.h"
 
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
-extern bool gVerboseDB;
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -62,8 +62,10 @@ void MySQLDB::loadConfiguration(std::string fileName)
   std::string sqlFilename(fileName);
   if(false == mConnection.loadFromFile(sqlFilename))
   {
-    std::cout << "The connection is blank\n";
+    LoggerSingleton::getInstance()->writeError("The connection is blank");
   }
+
+  mConnection.print();  
 }
 
 //----------------------------------------------------------------------------
@@ -82,7 +84,7 @@ void MySQLDB::openDatabase()
 
   if((""==mConnection.getHost())&&(""==mConnection.getUser()))
   {
-    std::cout << "The connection is blank not connecting to database\n";
+    LoggerSingleton::getInstance()->writeError("The connection is blank not connecting to database");
   }
   else
   {
@@ -115,10 +117,7 @@ void MySQLDB::executeStatement(std::string sqlCommand, int &returnValue)
     return;
   }
 
-  if(true == gVerboseDB)
-  {
-    std::cout << "executeStatement:{" + sqlCommand + "}" << std::endl;
-  }
+  LoggerSingleton::getInstance()->writeInfo("executeStatement:{" + sqlCommand + "}");
 
   try 
   {
@@ -128,11 +127,8 @@ void MySQLDB::executeStatement(std::string sqlCommand, int &returnValue)
   } 
   catch (sql::SQLException &e) 
   {
-    std::cout << "# ERR: SQLException in " << __FILE__;
-    /* Use what() (derived from std::runtime_error) to fetch the error message */
-    std::cout << "# ERR: " << e.what();
-    std::cout << " (MySQL error code: " << e.getErrorCode();
-    std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+    LoggerSingleton::getInstance()->writeError("# ERR: " + std::string(e.what())+ 
+      " (MySQL error code: " + std::to_string(e.getErrorCode()) + ", SQLState: " + e.getSQLState() + " )");
 
     returnValue = e.getErrorCode();
   }
@@ -154,10 +150,7 @@ std::shared_ptr<sql::ResultSet> MySQLDB::executeStatementWithResult(std::string 
     return nullptr;
   }
 
-  if(true == gVerboseDB)
-  {
-    std::cout << "executeStatementWithResult:{" + sqlCommand + "}" << std::endl;
-  }
+  LoggerSingleton::getInstance()->writeInfo("executeStatementWithResult:" + sqlCommand + "}");
 
   try 
   {
@@ -167,11 +160,8 @@ std::shared_ptr<sql::ResultSet> MySQLDB::executeStatementWithResult(std::string 
   } 
   catch (sql::SQLException &e) 
   {
-    std::cout << "# ERR: SQLException in " << __FILE__;
-    /* Use what() (derived from std::runtime_error) to fetch the error message */
-    std::cout << "# ERR: " << e.what();
-    std::cout << " (MySQL error code: " << e.getErrorCode();
-    std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+    LoggerSingleton::getInstance()->writeError("# ERR: " + std::string(e.what())+ 
+      " (MySQL error code: " + std::to_string(e.getErrorCode()) + ", SQLState: " + e.getSQLState() + " )");
 
     returnValue = e.getErrorCode();
   }

@@ -24,6 +24,7 @@
 #include <boost/beast/websocket.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/use_future.hpp>
+#include "loggerSingleton.h"
 #include "randomSingleton.h"
 
 using namespace std::chrono_literals;
@@ -48,7 +49,7 @@ boost::asio::ip::tcp::socket gSocket{gIOContext};
 //----------------------------------------------------------------------------
 void stopThread(int s)
 {
-  std::cout << "Stopping app\n";
+  LoggerSingleton::getInstance()->writeWarning("Stopping app");
   gRunTheThread = false;
 }
 
@@ -64,7 +65,8 @@ void doSession(boost::asio::ip::tcp::socket socket)
   int randSessionNumber = RandomSingleton::getInstance().next();
   std::string returnString = "";
 
-  std::cout << "Start session for" << socket.remote_endpoint().address().to_string() << std::endl;
+  LoggerSingleton::getInstance()->writeInfo("Start session for:" + socket.remote_endpoint().address().to_string());
+
   try
   {
     // Construct the stream by moving in the socket
@@ -89,7 +91,7 @@ void doSession(boost::asio::ip::tcp::socket socket)
       returnString = "{\"sessionID\": \""+std::to_string(randSessionNumber)+"\"";
       returnString += ", \"messageID\": \"" + std::to_string(RandomSingleton::getInstance().next())+"\"}";
 
-      std::cout << returnString << "\n";
+      LoggerSingleton::getInstance()->writeInfo(returnString);
       ws.write(boost::asio::buffer(returnString));
 
       std::this_thread::sleep_for(4000ms);
@@ -97,11 +99,11 @@ void doSession(boost::asio::ip::tcp::socket socket)
   }
   catch (boost::beast::system_error const &se)
   {
-      std::cout << "Error Boost: " << se.code().message() << std::endl;
+    LoggerSingleton::getInstance()->writeError("Error Boost: " + se.code().message());
   }
   catch (std::exception const &e)
   {
-      std::cout << "Error: " << e.what() << std::endl;
+    LoggerSingleton::getInstance()->writeError("Error: " + std::string(e.what()));
   }
 }
 
@@ -115,6 +117,9 @@ void doSession(boost::asio::ip::tcp::socket socket)
 int main(int argc, char *argv[])
 {
   int rc;
+
+  LoggerSingleton::getInstance()->setFilename("webSocketSimple",true);
+  LoggerSingleton::getInstance()->setSeverity(SEVERITY_DEBUG);
 
   signal(SIGTERM, stopThread);
   signal(SIGINT, stopThread);
@@ -131,11 +136,11 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &e)
     {
-        std::cerr << "Error: " << e.what() << std::endl;
+      LoggerSingleton::getInstance()->writeError("Error: " + std::string(e.what()));
     }
   }
 
-  std::cout << "Clean up\n";
+  LoggerSingleton::getInstance()->writeInfo("Clean up");
 
   for (std::shared_ptr<std::thread> curTread : gThreads)
   {

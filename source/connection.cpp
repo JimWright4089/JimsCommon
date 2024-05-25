@@ -14,6 +14,7 @@
 //----------------------------------------------------------------------------
 #include <iostream>
 #include <fstream>
+#include "loggerSingleton.h"
 #include "connection.h"
 #include "randomSingleton.h"
 //----------------------------------------------------------------------------
@@ -96,7 +97,6 @@ void Connection::parseJson(const Json::Value connection)
   mCACert = connection["cacert"].asString();
   mKeyStore = connection["keystore"].asString();
 
-
   int loc = 0;
   loc = mClientID.find(RANDOM_MARK);
   if(-1 != loc)
@@ -117,16 +117,16 @@ void Connection::parseJson(const Json::Value connection)
 //----------------------------------------------------------------------------
 void Connection::print(void)
 {
-  std::cout << "host     :" << mHost << "\n";
-  std::cout << "user     :" << getUser() << "\n";
-  std::cout << "password :" << getPassword() << "\n";
-  std::cout << "database :" << mDatabase << "\n";
-  std::cout << "port     :" << mPort << "\n";
-  std::cout << "client id:" << mClientID << "\n";
-  std::cout << "ca cert  :" << mCACert << "\n";
-  std::cout << "keystr   :" << mKeyStore << "\n";
-  std::cout << "MQTT addr:" << getMQTTAddress() << "\n";
-  std::cout << "SSL  addr:" << getSSLAddress() << "\n";
+  LoggerSingleton::getInstance()->writeInfo("host     :" + mHost);
+  LoggerSingleton::getInstance()->writeInfo("user     :" + getUser());
+  LoggerSingleton::getInstance()->writeInfo("password :" + getPassword());
+  LoggerSingleton::getInstance()->writeInfo("database :" + mDatabase);
+  LoggerSingleton::getInstance()->writeInfo("port     :" + std::to_string(mPort));
+  LoggerSingleton::getInstance()->writeInfo("client id:" + mClientID);
+  LoggerSingleton::getInstance()->writeInfo("ca cert  :" + mCACert);
+  LoggerSingleton::getInstance()->writeInfo("keystr   :" + mKeyStore);
+  LoggerSingleton::getInstance()->writeInfo("MQTT addr:" + getMQTTAddress());
+  LoggerSingleton::getInstance()->writeInfo("SSL  addr:" + getSSLAddress());
 }
 
 //----------------------------------------------------------------------------

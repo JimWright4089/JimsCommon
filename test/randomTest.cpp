@@ -14,6 +14,7 @@
 //----------------------------------------------------------------------------
 #include <iostream>
 #include <string>
+#include "loggerSingleton.h"
 #include "randomSingleton.h"
 
 //----------------------------------------------------------------------------
@@ -34,17 +35,20 @@ int main(int argc, char* argv[])
   double addAmount = 0.01;
   int rc=0;
 
+  LoggerSingleton::getInstance()->setFilename("randomTest",true);
+  LoggerSingleton::getInstance()->setSeverity(SEVERITY_DEBUG);
+
   for(int i=0;i<10;i++)
   {
-    std::cout << "Rand number:" << gRandomNumber.next() << "\n";
+    LoggerSingleton::getInstance()->writeInfo("Rand number:" + std::to_string(gRandomNumber.next()));
   }
   for(int i=0;i<10;i++)
   {
-    std::cout << "Rand number:" << gRandomNumber.next(100) << "\n";
+    LoggerSingleton::getInstance()->writeInfo("Rand number:" + std::to_string(gRandomNumber.next(100)));
   }
   for(int i=0;i<10;i++)
   {
-    std::cout << "Rand number:" << gRandomNumber.next(200,400) << "\n";
+    LoggerSingleton::getInstance()->writeInfo("Rand number:" + std::to_string(gRandomNumber.next(200,400)));
   }
 
   return rc;

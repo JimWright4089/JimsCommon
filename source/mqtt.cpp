@@ -17,6 +17,7 @@
 #include <cstdlib> 
 #include <ctime> 
 #include <thread>
+#include "loggerSingleton.h"
 #include "MQTTAsync.h"
 #include "mqtt.h"
 #include "stdio.h"
@@ -27,7 +28,6 @@ using namespace std::chrono_literals;
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
-extern bool gVerboseMQTT;
 void (*MQTT::mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message) = NULL;
 std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>MQTT::mMesageQueue = std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>(new std::queue<std::shared_ptr<MQTTMessage>>);
 int MQTT::mVerboseCount = 0;
@@ -67,14 +67,10 @@ void MQTT::loadConfiguration(std::string fileName)
   std::string sqlFilename(fileName);
   if(false == mConnection.loadFromFile(sqlFilename))
   {
-    std::cout << "The connection is blank\n";
+    LoggerSingleton::getInstance()->writeError("MQTT: The connection is blank\n");
   }
 
-  if(true == gVerboseMQTT)
-  {
-    mConnection.print();
-  }
-
+  mConnection.print();
 }
 
 //----------------------------------------------------------------------------
@@ -110,8 +106,7 @@ void MQTT::openMQTT()
 
   if ((rc = MQTTAsync_connect(mClient, &conn_opts)) != MQTTASYNC_SUCCESS)
   {
-    std::cout << "Failed to start connect, return code:" << rc << "\n";
-    exit(EXIT_FAILURE);
+    LoggerSingleton::getInstance()->writeError("Failed to start connect, return code:" + std::to_string(rc));
   }
 
   std::this_thread::sleep_for(2000ms);
@@ -138,8 +133,7 @@ void MQTT::send(char* topic, char* payload, int payloadLength)
   mDeliveredtoken = 0;
   if ((rc = MQTTAsync_sendMessage(mClient, topic, &pubmsg, &opts)) != MQTTASYNC_SUCCESS)
   {
-    std::cout << "Failed to start sendMessage, return code:" << rc << "\n";
-    exit(EXIT_FAILURE);
+    LoggerSingleton::getInstance()->writeError("Failed to start sendMessage, return code:" + std::to_string(rc));
   }
 }
 
@@ -153,10 +147,7 @@ void MQTT::send(char* topic, char* payload, int payloadLength)
 void MQTT::subscribe(char* topic)
 {
   int rc;
-  if(true == gVerboseMQTT)
-  {
-    std::cout << "Subscribing to topic:" << topic << std::endl;
-  }
+  LoggerSingleton::getInstance()->writeInfo("Subscribing to topic:" + std::string(topic));
 
   MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
   opts.onSuccess = onSubscribe;
@@ -164,7 +155,7 @@ void MQTT::subscribe(char* topic)
   opts.context = mClient;
   if ((rc = MQTTAsync_subscribe(mClient, topic, QOS, &opts)) != MQTTASYNC_SUCCESS)
   {
-    std::cout << "Failed to start subscribe, return code:" << rc << std::endl;
+    LoggerSingleton::getInstance()->writeError("Failed to start subscribe, return code:" + std::to_string(rc));
   }
 }
 
@@ -177,15 +168,12 @@ void MQTT::subscribe(char* topic)
 //----------------------------------------------------------------------------
 int MQTT::messageArrived(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
-  if(true == gVerboseMQTT)
+  if(0==(mVerboseCount%VERBOSE_MESSAGE_DISPLAY_MOD))
   {
-    if(0==(mVerboseCount%VERBOSE_MESSAGE_DISPLAY_MOD))
-    {
-      std::string payload((char*)message->payload);
-      std::cout << "Message arived:" << topicName << " len:" << topicLen << " message:" << payload << "\n"; 
-    }
-    mVerboseCount++;
+    std::string payload((char*)message->payload);
+    LoggerSingleton::getInstance()->writeInfo("Message arived:" + std::string(topicName) + " len:" + std::to_string(topicLen) + " message:" + std::string(payload));
   }
+  mVerboseCount++;
 
   if(NULL != mMessageArrivedFunction)
   {
@@ -237,14 +225,12 @@ void MQTT::connlost(void *context, char *cause)
   MQTTAsync client = (MQTTAsync)context;
   MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
   int rc;
-  std::cout << "\nConnection lost\n";
-  std::cout << "     cause:" <<  cause << "\n";
-  std::cout << "Reconnecting\n";
+  LoggerSingleton::getInstance()->writeError("Connection lost cause:" + std::string(cause) + "Reconnecting");
   conn_opts.keepAliveInterval = 20;
   conn_opts.cleansession = 1;
   if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
   {
-    std::cout << "Failed to start connect, return code " << rc << "\n";
+    LoggerSingleton::getInstance()->writeError("Failed to start connect, return code " + std::to_string(rc));
   }
 }
 
@@ -257,7 +243,7 @@ void MQTT::connlost(void *context, char *cause)
 //----------------------------------------------------------------------------
 void MQTT::onDisconnect(void* context, MQTTAsync_successData* response)
 {
-  std::cout << "Successful disconnection\n";
+  LoggerSingleton::getInstance()->writeInfo("Successful disconnection");
 }
 
 //----------------------------------------------------------------------------
@@ -269,10 +255,7 @@ void MQTT::onDisconnect(void* context, MQTTAsync_successData* response)
 //----------------------------------------------------------------------------
 void MQTT::onSend(void* context, MQTTAsync_successData* response)
 {
-  if(true == gVerboseMQTT)
-  {
-    std::cout << "Message with token value:" << response->token << " delivery confirmed\n";
-  }
+  LoggerSingleton::getInstance()->writeInfo("Message with token value:" + std::to_string(response->token) + " delivery confirmed");
 }
 
 //----------------------------------------------------------------------------
@@ -284,7 +267,7 @@ void MQTT::onSend(void* context, MQTTAsync_successData* response)
 //----------------------------------------------------------------------------
 void MQTT::onConnectFailure(void* context, MQTTAsync_failureData* response)
 {
-  std::cout << "Connect failed, rc:" << (response ? std::to_string(response->code) : "0") << "\n";
+  LoggerSingleton::getInstance()->writeError("Connect failed, rc:" + (response ? std::to_string(response->code) : "0"));
 }
 
 //----------------------------------------------------------------------------
@@ -296,7 +279,7 @@ void MQTT::onConnectFailure(void* context, MQTTAsync_failureData* response)
 //----------------------------------------------------------------------------
 void MQTT::onConnect(void* context, MQTTAsync_successData* response)
 {
-  std::cout << "Successful connection\n";
+  LoggerSingleton::getInstance()->writeInfo("Successful connection");
 }
 
 //----------------------------------------------------------------------------
@@ -308,10 +291,7 @@ void MQTT::onConnect(void* context, MQTTAsync_successData* response)
 //----------------------------------------------------------------------------
 void MQTT::onSubscribe(void* context, MQTTAsync_successData* response)
 {
-  if(true == gVerboseMQTT)
-  {
-    std::cout << "Subscribe succeeded" << std::endl;
-  }
+  LoggerSingleton::getInstance()->writeInfo("Subscribe succeeded");
 }
 
 //----------------------------------------------------------------------------
@@ -323,5 +303,5 @@ void MQTT::onSubscribe(void* context, MQTTAsync_successData* response)
 //----------------------------------------------------------------------------
 void MQTT::onSubscribeFailure(void* context, MQTTAsync_failureData* response)
 {
-  std::cout << "Subscribe failed, rc:" << (response ? response->code : 0) << std::endl;
+  LoggerSingleton::getInstance()->writeError("Subscribe failed, rc:" + (response ? std::to_string(response->code) : "0"));
 }

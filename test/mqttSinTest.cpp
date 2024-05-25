@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "loggerSingleton.h"
 #include "MQTTAsync.h"
 #include "math.h"
 #include "connection.h"
@@ -62,9 +63,13 @@ void send(char* topic, double value)
 int main(int argc, char* argv[])
 {
   int rc=0;
+
+  LoggerSingleton::getInstance()->setFilename("mqttSinTest",true);
+  LoggerSingleton::getInstance()->setSeverity(SEVERITY_INFO);
+
   if(argc != 2)
   {
-    std::cout << "Usage: sqltest <mqtt connection file> " << std::endl;
+    LoggerSingleton::getInstance()->writeError("Usage: mqttSinTest <mqtt connection file> ");
     return -1;
   }
 
