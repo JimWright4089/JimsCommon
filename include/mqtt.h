@@ -45,7 +45,9 @@ class MQTT
     void loadConfiguration(std::string fileName);
     void openMQTT();
 //    void connect(Connection connect);
-    void send(char* topic, char* payload, int payloadLength);
+    void send(const char* topic, const char* payload, int payloadLength);
+    void send(const char* topic, std::string payload);
+    void send(std::string topic, std::string payload);
     void subscribe(char* topic);
     void setMessageArrivedFunction(void (*messageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message));
     std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>> getMessageQueue();
@@ -60,6 +62,7 @@ class MQTT
     static void (*mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message);
     static std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>mMesageQueue;
     static int mVerboseCount;
+    static bool mUseQueue;
 
     //----------------------------------------------------------------------------
     //  Class Methods

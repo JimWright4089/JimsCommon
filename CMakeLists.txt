@@ -14,10 +14,10 @@ FIND_PACKAGE( Boost 1.74.0 COMPONENTS program_options REQUIRED )
 FIND_PACKAGE( Boost 1.74.0 COMPONENTS thread log log_setup REQUIRED )
 find_package(Threads)
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
-file(GLOB sources ./source/connection.cpp)
-add_library(JimsCommon ${sources}) # STATIC by default
-target_include_directories(JimsCommon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(JimsCommon jsoncpp)
+#file(GLOB sources ./source/connection.cpp)
+#add_library(JimsCommon ${sources}) # STATIC by default
+#target_include_directories(JimsCommon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#target_link_libraries(JimsCommon jsoncpp)
 INCLUDE_DIRECTORIES( ./include )
 
 add_executable(sinMqttTest
@@ -30,6 +30,28 @@ add_executable(sinMqttTest
 ./test/mqttSinTest.cpp
 )
 target_link_libraries(sinMqttTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
+
+add_executable(mqttSubSinQueueTest
+../JimsCommon/source/logger.cpp
+../JimsCommon/source/loggerSingleton.cpp
+./source/randomSingleton.cpp
+./source/connection.cpp
+./source/mqtt.cpp
+./source/mqttMessage.cpp
+./test/mqttSubSinQueueTest.cpp
+)
+target_link_libraries(mqttSubSinQueueTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
+
+add_executable(mqttSubSinFuncTest
+../JimsCommon/source/logger.cpp
+../JimsCommon/source/loggerSingleton.cpp
+./source/randomSingleton.cpp
+./source/connection.cpp
+./source/mqtt.cpp
+./source/mqttMessage.cpp
+./test/mqttSubSinFuncTest.cpp
+)
+target_link_libraries(mqttSubSinFuncTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
 
 add_executable(sinMqttSingletonTest
 ../JimsCommon/source/logger.cpp

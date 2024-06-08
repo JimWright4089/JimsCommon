@@ -31,6 +31,7 @@ using namespace std::chrono_literals;
 void (*MQTT::mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message) = NULL;
 std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>MQTT::mMesageQueue = std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>(new std::queue<std::shared_ptr<MQTTMessage>>);
 int MQTT::mVerboseCount = 0;
+bool MQTT::mUseQueue = false;
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -119,7 +120,7 @@ void MQTT::openMQTT()
 //  Notes:
 //
 //----------------------------------------------------------------------------
-void MQTT::send(char* topic, char* payload, int payloadLength)
+void MQTT::send(const char* topic, const char* payload, int payloadLength)
 {
   MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
   MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
@@ -135,6 +136,30 @@ void MQTT::send(char* topic, char* payload, int payloadLength)
   {
     LoggerSingleton::getInstance()->writeError("Failed to start sendMessage, return code:" + std::to_string(rc));
   }
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Send a text packet
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::send(const char* topic, std::string payload)
+{
+  send(topic,payload.c_str(),strlen(payload.c_str()));
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Send a text packet
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void MQTT::send(std::string topic, std::string payload)
+{
+  send(topic.c_str(),payload.c_str(),strlen(payload.c_str()));
 }
 
 //----------------------------------------------------------------------------
@@ -180,8 +205,11 @@ int MQTT::messageArrived(void *context, char *topicName, int topicLen, MQTTAsync
     mMessageArrivedFunction(topicName, topicLen, message);
   }
 
-  std::shared_ptr<MQTTMessage> mqttMessage = std::shared_ptr<MQTTMessage>(new MQTTMessage(topicName, (char*)message->payload));
-  mMesageQueue->push(mqttMessage);  
+  if(true == mUseQueue)
+  {
+    std::shared_ptr<MQTTMessage> mqttMessage = std::shared_ptr<MQTTMessage>(new MQTTMessage(topicName, (char*)message->payload));
+    mMesageQueue->push(mqttMessage);  
+  }
 
   MQTTAsync_freeMessage(&message);
   MQTTAsync_free(topicName);
@@ -210,6 +238,7 @@ void MQTT::setMessageArrivedFunction(void (*messageArrivedFunction)(char *topicN
 //----------------------------------------------------------------------------
 std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>> MQTT::getMessageQueue()
 {
+  mUseQueue = true;
   return mMesageQueue;
 }
 
