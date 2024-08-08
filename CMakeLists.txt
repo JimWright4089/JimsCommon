@@ -86,6 +86,14 @@ add_executable(mySqlSingletonTest
 )
 target_link_libraries(mySqlSingletonTest jsoncpp ${Boost_LIBRARIES} mysqlcppconn)
 
+add_executable(propertyTest
+../JimsCommon/source/logger.cpp
+../JimsCommon/source/loggerSingleton.cpp
+../JimsCommon/source/propertyFile.cpp
+./test/propertyTest.cpp
+)
+target_link_libraries(propertyTest ${Boost_LIBRARIES})
+
 add_executable(randomTest
 ../JimsCommon/source/logger.cpp
 ../JimsCommon/source/loggerSingleton.cpp

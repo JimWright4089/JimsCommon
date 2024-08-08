@@ -117,16 +117,16 @@ void Connection::parseJson(const Json::Value connection)
 //----------------------------------------------------------------------------
 void Connection::print(void)
 {
-  LoggerSingleton::getInstance()->writeInfo("host     :" + mHost);
-  LoggerSingleton::getInstance()->writeInfo("user     :" + getUser());
-  LoggerSingleton::getInstance()->writeInfo("password :" + getPassword());
-  LoggerSingleton::getInstance()->writeInfo("database :" + mDatabase);
-  LoggerSingleton::getInstance()->writeInfo("port     :" + std::to_string(mPort));
-  LoggerSingleton::getInstance()->writeInfo("client id:" + mClientID);
-  LoggerSingleton::getInstance()->writeInfo("ca cert  :" + mCACert);
-  LoggerSingleton::getInstance()->writeInfo("keystr   :" + mKeyStore);
-  LoggerSingleton::getInstance()->writeInfo("MQTT addr:" + getMQTTAddress());
-  LoggerSingleton::getInstance()->writeInfo("SSL  addr:" + getSSLAddress());
+  LoggerSingleton::getInstance()->writeDebug("host     :" + mHost);
+  LoggerSingleton::getInstance()->writeDebug("user     :" + getUser());
+  LoggerSingleton::getInstance()->writeDebug("password :" + getPassword());
+  LoggerSingleton::getInstance()->writeDebug("database :" + mDatabase);
+  LoggerSingleton::getInstance()->writeDebug("port     :" + std::to_string(mPort));
+  LoggerSingleton::getInstance()->writeDebug("client id:" + mClientID);
+  LoggerSingleton::getInstance()->writeDebug("ca cert  :" + mCACert);
+  LoggerSingleton::getInstance()->writeDebug("keystr   :" + mKeyStore);
+  LoggerSingleton::getInstance()->writeDebug("MQTT addr:" + getMQTTAddress());
+  LoggerSingleton::getInstance()->writeDebug("SSL  addr:" + getSSLAddress());
 }
 
 //----------------------------------------------------------------------------
