@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------------
 //  Global and Static data
 //----------------------------------------------------------------------------
+std::mutex MySQLDB::mSQLMutex;
 
 //----------------------------------------------------------------------------
 //  Purpose:
@@ -121,6 +122,7 @@ void MySQLDB::executeStatement(std::string sqlCommand, int &returnValue)
 
   try 
   {
+    std::lock_guard<std::mutex> guard(mSQLMutex);
     std::shared_ptr<sql::Statement> statement = std::shared_ptr<sql::Statement>(mConnect->createStatement());
     statement->execute(sqlCommand.c_str());
     returnValue = EXIT_SUCCESS;
@@ -154,6 +156,7 @@ std::shared_ptr<sql::ResultSet> MySQLDB::executeStatementWithResult(std::string 
 
   try 
   {
+    std::lock_guard<std::mutex> guard(mSQLMutex);
     returnValue = EXIT_SUCCESS;
     std::shared_ptr<sql::Statement> statement = std::shared_ptr<sql::Statement>(mConnect->createStatement());
     return std::shared_ptr<sql::ResultSet>(statement->executeQuery(sqlCommand.c_str()));

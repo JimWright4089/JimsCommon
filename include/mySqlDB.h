@@ -15,6 +15,7 @@
 //  Includes
 //----------------------------------------------------------------------------
 #include <string>
+#include <mutex>
 #include "connection.h"
 #include "mysql_driver.h"
 #include <cppconn/driver.h>
@@ -54,6 +55,8 @@ class MySQLDB
     Connection mConnection;
     sql::Driver* mDriver;
     sql::Connection* mConnect;
+    static std::mutex mSQLMutex;
+
 
     //----------------------------------------------------------------------------
     //  Class Methods
