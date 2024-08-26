@@ -135,3 +135,40 @@ add_executable(logTestSingleton
 ./test/logTestSingleton.cpp
 )
 target_link_libraries(logTestSingleton ${Boost_LIBRARIES})
+
+add_executable(mqttPubTest
+./source/logger.cpp
+./source/loggerSingleton.cpp
+./source/stopWatch.cpp
+./source/randomSingleton.cpp
+./source/connection.cpp
+./source/mqtt.cpp
+./source/mqttMessage.cpp
+./test/mqttPubTest.cpp
+)
+target_link_libraries(mqttPubTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
+
+add_executable(mqttPubAutoTest
+./source/logger.cpp
+./source/loggerSingleton.cpp
+./source/stopWatch.cpp
+./source/randomSingleton.cpp
+./source/connection.cpp
+./source/mqtt.cpp
+./source/mqttMessage.cpp
+./test/mqttPubAutoTest.cpp
+)
+target_link_libraries(mqttPubAutoTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
+
+add_executable(mqttSubTest
+./source/logger.cpp
+./source/loggerSingleton.cpp
+./source/stopWatch.cpp
+./source/randomSingleton.cpp
+./source/connection.cpp
+./source/mqtt.cpp
+./source/mqttMessage.cpp
+./test/mqttSubTest.cpp
+)
+target_link_libraries(mqttSubTest jsoncpp paho-mqtt3a ${Boost_LIBRARIES})
+

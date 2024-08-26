@@ -43,15 +43,22 @@ class MQTT
     ~MQTT();
 
     void loadConfiguration(std::string fileName);
+    void loadConfiguration(std::string address, std::string port, std::string user, std::string password);
     void openMQTT();
 //    void connect(Connection connect);
     void send(const char* topic, const char* payload, int payloadLength);
     void send(const char* topic, std::string payload);
     void send(std::string topic, std::string payload);
-    void subscribe(char* topic);
+    void subscribe(char* topic, bool addTopic = true);
+    void subscribe(std::string topic, bool addTopic = true);
+    void subscribe(std::shared_ptr<std::string> topic, bool addTopic = true);
     void setMessageArrivedFunction(void (*messageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message));
     std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>> getMessageQueue();
-    
+    bool isConnected();
+    bool getAutoConnectOnSend();
+    void setAutoConnectOnSend(bool value);
+    void reSubscribe();
+
   private:
     //----------------------------------------------------------------------------
     //  Class Atributes
@@ -60,9 +67,18 @@ class MQTT
     Connection mConnection;
     volatile MQTTAsync_token mDeliveredtoken;
     static void (*mMessageArrivedFunction)(char *topicName, int topicLen, MQTTAsync_message *message);
-    static std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>>mMesageQueue;
+    static std::shared_ptr<std::queue<std::shared_ptr<MQTTMessage>>> mMesageQueue;
     static int mVerboseCount;
     static bool mUseQueue;
+    static bool mConnected;
+    static bool mAutoConnectOnSend;
+    static int mConnectFailedLog;
+    static std::shared_ptr<std::vector<std::shared_ptr<std::string>>> mSubscribeList;
+
+    std::string mUser;
+    std::string mPassword;
+    std::string mMQttAddress;
+    std::string mClientID;
 
     //----------------------------------------------------------------------------
     //  Class Methods
