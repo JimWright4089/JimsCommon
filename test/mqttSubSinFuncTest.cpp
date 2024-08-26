@@ -63,8 +63,9 @@ void messageArrived(char *topicName, int topicLen, MQTTAsync_message *message)
 {
   std::string payload((char*)message->payload);
   std::string topic(topicName);
+  
   LoggerSingleton::getInstance()->writeInfo("User Message arived:" + std::string(topicName) + 
-  " len:" + std::to_string(topicLen) + " message:" + std::string(payload));
+  " len:" + std::to_string(topicLen) + " plen:"+ std::to_string(message->payloadlen) + " message:" + std::string(payload));
 }
 
 //----------------------------------------------------------------------------

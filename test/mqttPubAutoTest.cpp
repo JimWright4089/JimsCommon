@@ -52,6 +52,23 @@ void stopThread(int s)
 
 //----------------------------------------------------------------------------
 //  Purpose:
+//   The call back function
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+void messageArrived(char *topicName, int topicLen, MQTTAsync_message *message)
+{
+  std::string payload((char*)message->payload);
+  payload = payload.substr(0,message->payloadlen);
+  std::string topic(topicName);
+  LoggerSingleton::getInstance()->writeInfo("User Message arived:" + std::string(topicName) + 
+    " len:" + std::to_string(topicLen) + " plen:"+ std::to_string(message->payloadlen) + " message:" + std::string(payload));
+}
+
+
+//----------------------------------------------------------------------------
+//  Purpose:
 //   Entry point
 //
 //  Notes:
@@ -77,6 +94,8 @@ int main(int argc, char* argv[])
 
   gMqtt->loadConfiguration(argv[1]);
   gMqtt->openMQTT();
+  gMqtt->subscribe((char*)"test/health");
+  gMqtt->setMessageArrivedFunction(&messageArrived);  
   gMqtt->setAutoConnectOnSend(true);
 
   std::shared_ptr<StopWatch> sendWatch = 

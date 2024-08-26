@@ -156,6 +156,11 @@ void MQTT::send(const char* topic, const char* payload, int payloadLength)
       LoggerSingleton::getInstance()->writeInfo("connect to MQTT");
       openMQTT();
       std::this_thread::sleep_for(1s);
+
+      if(true == mConnected)
+      {
+        reSubscribe();
+      }
     }
     else
     {
@@ -240,7 +245,6 @@ void MQTT::subscribe(char* topic, bool addTopic)
 //----------------------------------------------------------------------------
 void MQTT::subscribe(std::string topic, bool addTopic)
 {
-  LoggerSingleton::getInstance()->writeInfo("void MQTT::subscribe(std::string topic):" + topic);
   subscribe((char*)topic.c_str(),addTopic);
 }
 
@@ -253,7 +257,6 @@ void MQTT::subscribe(std::string topic, bool addTopic)
 //----------------------------------------------------------------------------
 void MQTT::subscribe(std::shared_ptr<std::string> topic, bool addTopic)
 {
-  LoggerSingleton::getInstance()->writeInfo("void MQTT::subscribe(std::shared_ptr<std::string> topic):" + *topic);
   subscribe(*topic, addTopic);
 }
 
@@ -280,7 +283,8 @@ int MQTT::messageArrived(void *context, char *topicName, int topicLen, MQTTAsync
 
   if(true == mUseQueue)
   {
-    std::shared_ptr<MQTTMessage> mqttMessage = std::shared_ptr<MQTTMessage>(new MQTTMessage(topicName, (char*)message->payload));
+    std::shared_ptr<MQTTMessage> mqttMessage = std::shared_ptr<MQTTMessage>(
+        new MQTTMessage(topicName, (char*)message->payload, message->payloadlen));
     mMesageQueue->push(mqttMessage);  
   }
 

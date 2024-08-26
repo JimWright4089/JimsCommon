@@ -30,10 +30,12 @@
 //  Notes:
 //
 //----------------------------------------------------------------------------
-MQTTMessage::MQTTMessage(char* topic, char* payload)
+MQTTMessage::MQTTMessage(char* topic, char* payload, int payloadLen)
 {
   mTopic = std::string(topic);
   mPayload = std::string(payload);
+  mPayloadLen = payloadLen;
+  mPayload = mPayload.substr(0,mPayloadLen);
 }
 
 //----------------------------------------------------------------------------
@@ -69,4 +71,16 @@ std::string MQTTMessage::getTopic()
 std::string MQTTMessage::getPayload()
 {
   return mPayload;
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   Getter Setter
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+int MQTTMessage::getPayloadLen()
+{
+  return mPayloadLen;
 }

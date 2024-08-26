@@ -32,17 +32,19 @@ class MQTTMessage
     //----------------------------------------------------------------------------
     //  Class Methods
     //----------------------------------------------------------------------------
-    MQTTMessage(char* topic, char* payload);
+    MQTTMessage(char* topic, char* payload, int payloadLen);
     ~MQTTMessage();
     std::string getTopic();
     std::string getPayload();
+    int getPayloadLen();
     
   private:
     //----------------------------------------------------------------------------
     //  Class Atributes
     //----------------------------------------------------------------------------
-    std::string mTopic;
-    std::string mPayload;    
+    std::string mTopic = "";
+    std::string mPayload = "";
+    int mPayloadLen = 0;
 
     //----------------------------------------------------------------------------
     //  Class Methods
