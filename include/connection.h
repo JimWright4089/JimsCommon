@@ -50,6 +50,7 @@ class Connection
     std::string getUser();
     std::string getPassword();
     std::string getDatabase();
+    std::string getDevice();
     int getPort();
     std::string getClientID();
     std::string getMQTTAddress();
@@ -65,6 +66,7 @@ class Connection
     std::string mUser = "";
     std::string mPassword = "";
     std::string mDatabase = "";
+    std::string mDevice = "";
     int mPort = 0;
     std::string mClientID = "";
     std::string mCACert = "";

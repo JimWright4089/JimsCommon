@@ -29,6 +29,7 @@ Connection::Connection()
     mUser(""),
     mPassword(""),
     mDatabase(""),
+    mDevice(""),
     mPort(0),
     mClientID(""),
     mCACert(""),
@@ -48,6 +49,7 @@ Connection::Connection(const Json::Value connection)
     mUser(""),
     mPassword(""),
     mDatabase(""),
+    mDevice(""),
     mPort(0),
     mClientID(""),
     mCACert(""),
@@ -68,6 +70,7 @@ Connection::Connection(std::string jsonBody)
     mUser(""),
     mPassword(""),
     mDatabase(""),
+    mDevice(""),
     mPort(0),
     mClientID(""),
     mCACert(""),
@@ -92,6 +95,7 @@ void Connection::parseJson(const Json::Value connection)
   mUser = connection["user"].asString();
   mPassword = connection["password"].asString();
   mDatabase = connection["database"].asString();
+  mDevice = connection["device"].asString();
   mPort = connection["port"].asInt();
   mClientID = connection["clientid"].asString();
   mCACert = connection["cacert"].asString();
@@ -121,6 +125,7 @@ void Connection::print(void)
   LoggerSingleton::getInstance()->writeDebug("user     :" + getUser());
   LoggerSingleton::getInstance()->writeDebug("password :" + getPassword());
   LoggerSingleton::getInstance()->writeDebug("database :" + mDatabase);
+  LoggerSingleton::getInstance()->writeDebug("device   :" + mDevice);
   LoggerSingleton::getInstance()->writeDebug("port     :" + std::to_string(mPort));
   LoggerSingleton::getInstance()->writeDebug("client id:" + mClientID);
   LoggerSingleton::getInstance()->writeDebug("ca cert  :" + mCACert);
@@ -144,6 +149,7 @@ std::string Connection::getJson()
   connection["user"] = mUser;
   connection["password"] = mPassword;
   connection["database"] = mDatabase;
+  connection["device"] = mDevice;
   connection["port"] = mPort;
   connection["clientid"] = mClientID;
   connection["cacert"] = mCACert;
@@ -223,6 +229,18 @@ std::string Connection::getPassword()
 std::string Connection::getDatabase()
 {
   return mDatabase;
+}
+
+//----------------------------------------------------------------------------
+//  Purpose:
+//   return the device
+//
+//  Notes:
+//
+//----------------------------------------------------------------------------
+std::string Connection::getDevice()
+{
+  return mDevice;
 }
 
 //----------------------------------------------------------------------------
